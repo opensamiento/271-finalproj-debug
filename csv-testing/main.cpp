@@ -7,6 +7,31 @@
 
 using namespace std;
 
+class Job
+{
+    private:
+        int aTransferTo;
+        int aTransferFr;
+        int time;
+        int cust_id;
+        int transfer_amt;
+        int wealth;
+    public:
+        Job();
+        int get_aTransferTo();
+        int set_aTransferTo(int trTo);
+        int get_aTransferFr();
+        int set_aTransferFr(int trFr);
+        int get_time();
+        int set_time(int sec);
+        int get_cust_id();
+        int set_cust_id(int id);
+        int get_transfer_amt();
+        int set_transfer_amt(int trans);
+        int get_wealth ();
+        int set_wealth (int cash);
+}
+
 int read_file(vector <string> &v);
 int str_conversion(string n_str);
 int sorted_ints (vector <int> &vi);
