@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1462043841 source:c:\users\opens\desktop\cstuff\csv-testing\main.cpp
+	<iostream>
+	<fstream>
+	<cstring>
+	<vector>
+	<stdlib.h>
+
