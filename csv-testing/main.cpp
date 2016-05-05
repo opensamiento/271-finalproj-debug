@@ -176,9 +176,13 @@ void endl_conversion(vector <int> &vi, string int_str)
         B_array[k] = int_str[j];
         k++;
     }
-
-    vi.push_back(atoi(A_array)); //two numbers are pushed onto vector, first is A and then B (time, THEN cust ID)
-    vi.push_back(atoi(B_array));
+    int tempA, tempB;
+    tempA = atoi(A_array);
+    tempB = atoi (B_array);
+    if (tempA!=0)
+        vi.push_back(atoi(A_array)); //two numbers are pushed onto vector, first is A and then B (time, THEN cust ID)
+    if (tempB!=0)
+        vi.push_back(atoi(B_array));
 
 }
 
