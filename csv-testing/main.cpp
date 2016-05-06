@@ -18,22 +18,89 @@ private:
     int dtime;
 
 public:
-    Job (int i, int t, int wi, int d, int we, int dt);
 
-    bool get_id (int &idno);
-    bool get_transfer (int &trans);
-    bool get_withdraw (int &with);
-    bool get_deposit (int &dep);
-    bool get_wealth (int &we);
-    bool get_dtime (int &dtim);
+    Job ();
 
-    bool set_id (int idd);
-    bool set_transfer (int trans);
-    bool set_withdraw (int with);
-    bool set_deposit (int dep);
-    bool set_wealth (int we);
-    bool set_dtime (int dtim);
+    int get_id ();
+    int get_transfer ();
+    int get_withdraw ();
+    int get_deposit ();
+    int get_wealth ();
+    int get_dtime ();
+
+    void set_id (int idd);
+    void set_transfer (int trans);
+    void set_withdraw (int with);
+    void set_deposit (int dep);
+    void set_wealth (int we);
+    void set_dtime (int dtim);
 };
+
+Job::Job()
+{
+    id=transfer=withdraw=deposit=wealth=dtime=0; //set up job as all 0s
+}
+
+int Job::get_id()
+{
+    return id;
+}
+
+int Job::get_transfer()
+{
+    return transfer;
+}
+
+int Job::get_withdraw()
+{
+    return withdraw;
+}
+
+int Job::get_deposit()
+{
+    return deposit;
+}
+
+int Job::get_wealth()
+{
+    return wealth;
+}
+
+int Job::get_dtime()
+{
+    return dtime;
+}
+
+void Job::set_id(int idd)
+{
+    id = idd;
+}
+
+void Job::set_transfer(int trans)
+{
+    transfer=trans;
+}
+
+void Job::set_withdraw(int with)
+{
+    withdraw = with;
+}
+
+void Job::set_deposit(int dep)
+{
+    deposit = dep;
+}
+
+void Job::set_wealth(int we)
+{
+    wealth = we;
+}
+
+void Job::set_dtime(int dtim)
+{
+    dtime = dtim;
+}
+
 
 int read_file(vector <string> &v);
 int str_conversion(string n_str);
@@ -46,30 +113,15 @@ int main()
     vector <int> int_vector;
     vector <Job> jobs_vector;
     read_file(csv);
-    string temp;
-    /*debug
-    int i; //n = no of chars in string from vector at some index
-    for (i=0;i<21;i++)
-        cout << i << ": " << " " << csv [i] << endl; //pay attention to \n (happens at every 5th position (where i%5=0)
-    cout << endl;
-    temp = csv [15];
-    cout << "Element at pos 15: " << endl;
-    for (i=0;i<temp.size();i++) {
-        cout << temp[i] << " ";
-    }
-
-    cout << "Size: " << temp.size() << endl;
-    string newl = "\n";
-    cout << "L of new1: " << newl.size() << endl << endl; //mystery solved: \n is read as 1 char!!!!
-    end-debug*/
-
+    /*
     cout << "Size of vector csv: " << csv.size() << endl; //debugging
     cout << "Item 6 (Pos 5): " << csv [5] << endl;
+    */
     string no_str = csv[5]; //use for special case at beg of csv file (string AND int are joined together)
     char * no_array = new char [3];
     int k=0, i=0;
-    for (k=0;k<no_str.size();k++) //THIS WORKS - get first position when numbers are combined with other items
-                                    //in this case it's the first line (where number is combined w a string of text)
+    for (k=0;k<no_str.size();k++) //UNIQUE CASE - get fifth position of string vector when numbers are combined with string of text
+                                    //in this case it's the first line on the CSV file (423 is attached at end)
     {
         if (no_str[k] == '\n' )
         {
@@ -80,35 +132,50 @@ int main()
             k = no_str.size(); //ends loop (k's value indicates loop should end)
         }
     }
-    cout << "In array: ";
-    for (i=0;i<3;i++)
-        cout << no_array[i];
-    cout << endl << "In vector int_vector: " << int_vector[0] << endl;
-    for (i=6;i<csv.size();i++) //sort thru vector AFTER first few lines
+    for (i=6;i<csv.size();i++) //sort thru string vector AFTER first 6 lines
     {
         if (i%5==0) //every line that has the two nos combined is in index divisible by 5 (i.e. every 5th position in vector csv)
-        {
-
             endl_conversion(int_vector, csv[i]);
-        }
         else
-        {
             int_vector.push_back(str_conversion(csv[i]));
-        }
     }
-
+    /*
     cout << "Size of int_vector: " << int_vector.size() << endl;
     for (int l=0; l<int_vector.size();l++)
     {
         cout << "Elements in int vector:" << int_vector[l] <<endl;
     }
-    /*
     int j;
     for (j=0; j< csv.size(); j++)
     {
         cout<<"Elements in csv vector:" << csv[j] <<endl;
     }
     */
+
+    Job temp_job; //temp_job will represent the new job to be inserted into jobs_vector
+    i = 0; //reset index indicator i to 0 to start new search
+    while (i<int_vector.size()) { //begin searching in int_vector for data; data is grouped as 6 ints
+        temp_job.set_id(int_vector[i]);
+        temp_job.set_transfer(int_vector[i+1]);
+        temp_job.set_withdraw(int_vector[i+2]);
+        temp_job.set_deposit(int_vector[i+3]);
+        temp_job.set_wealth(int_vector[i+4]);
+        temp_job.set_dtime(int_vector[i+5]);
+        jobs_vector.push_back(temp_job); //push newly created job onto jobs_vector
+        i+=6; //increase index by 6 to get next set of information for next job
+    }
+    cout << "size of jobs_vector: " << jobs_vector.size() << endl << endl; //debugging
+    for (i=0;i<jobs_vector.size();i++) {
+        cout << "stuff in temp_job at " << i << ": \n";
+        cout << "id: " << jobs_vector[i].get_id() << endl;
+        cout << "transfer: " << jobs_vector[i].get_transfer() << endl;
+        cout << "withdraw: " << jobs_vector[i].get_withdraw() << endl;
+        cout << "deposit: " << jobs_vector[i].get_withdraw() << endl;
+        cout << "wealth: " << jobs_vector[i].get_wealth() << endl;
+        cout << "time: " << jobs_vector[i].get_dtime() << endl;
+    }
+    cout << "Done with jobs_vector! \n";
+
     return 0;
 }
 
@@ -179,9 +246,9 @@ void endl_conversion(vector <int> &vi, string int_str)
     int tempA, tempB;
     tempA = atoi(A_array);
     tempB = atoi (B_array);
-    if (tempA!=0)
+    if (tempA!=0) //if number is NOT 0, add it!
         vi.push_back(atoi(A_array)); //two numbers are pushed onto vector, first is A and then B (time, THEN cust ID)
-    if (tempB!=0)
+    if (tempB!=0) //same as tempA, avoid having any 0s in vector
         vi.push_back(atoi(B_array));
 
 }
