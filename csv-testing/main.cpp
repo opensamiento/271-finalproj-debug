@@ -19,7 +19,7 @@ private:
 
 public:
     Job ();
-    //getters (set as all ints to return the proper data)
+    //getters (data obtained from int_vector when constructing jobs)
     int get_id ();
     int get_transfer ();
     int get_withdraw ();
@@ -37,7 +37,7 @@ public:
 
 Job::Job() //empty constructor
 {
-    id=transfer=withdraw=deposit=wealth=dtime=0; //set up job as all 0s
+    id=transfer=withdraw=deposit=wealth=dtime=0; //set up job's values as all 0s, change them later when inserted into job_vector
 }
 
 int Job::get_id()
@@ -106,11 +106,16 @@ int str_conversion(string n_str);
 int sorted_ints (vector <int> &vi, string int_str);
 void endl_conversion(vector <int> &vi, string int_str);
 
+void QuickSort (vector <Job> &jv, int left, int right);
+void swapp (Job &x, Job &y); //for use in quicksort, swapping values
+
 int main()
 {
-    vector <string> csv;
-    vector <int> int_vector;
-    vector <Job> jobs_vector;
+    vector <string> csv; //items first read in from CSV file are strings
+    vector <int> int_vector; //conversions happen just for ints in CSV file, put here
+    vector <Job> jobs_vector; //jobs w 6 related categories, inserted into vector w all jobs (unsorted in beginning)
+    int left, right;
+    left=right=0;
     read_file(csv);
     /*
     cout << "Size of vector csv: " << csv.size() << endl; //debugging
@@ -118,16 +123,16 @@ int main()
     */
     string no_str = csv[5]; //use for special case at beg of csv file (string AND int are joined together)
     char * no_array = new char [3];
-    int k=0, i=0;
+    int k=0, i=0; //indexing purposes
     for (k=0;k<no_str.size();k++) //UNIQUE CASE - get fifth position of string vector when numbers are combined with string of text
                                     //in this case it's the first line on the CSV file (423 is attached at end)
     {
-        if (no_str[k] == '\n' )
+        if (no_str[k] == '\n' ) //find the newline char
         {
-            no_array[0] = no_str[no_str.size()-3];
+            no_array[0] = no_str[no_str.size()-3]; //customer ID for first job is 423, 3 digits total
             no_array[1] = no_str [no_str.size()-2];
             no_array[2] = no_str [no_str.size()-1];
-            int_vector.push_back(atoi(no_array));
+            int_vector.push_back(atoi(no_array)); //first item is put on int_vector, later to be used for first job's ID
             k = no_str.size(); //ends loop (k's value indicates loop should end)
         }
     }
@@ -136,7 +141,7 @@ int main()
         if (i%5==0) //every line that has the two nos combined is in index divisible by 5 (i.e. every 5th position in vector csv)
             endl_conversion(int_vector, csv[i]);
         else
-            int_vector.push_back(str_conversion(csv[i]));
+            int_vector.push_back(str_conversion(csv[i])); //if it's not at that position, just insert the number onto the vector (after conversion)
     }
     /*
     cout << "Size of int_vector: " << int_vector.size() << endl;
@@ -153,7 +158,7 @@ int main()
 
     Job temp_job; //temp_job will represent the new job to be inserted into jobs_vector
     i = 0; //reset index indicator i to 0 to start new search
-    while (i<int_vector.size()) { //begin searching in int_vector for data; data is grouped as 6 ints
+    while (i<int_vector.size()) { //begin searching in int_vector for data; data is grouped as 6 ints in int_vector for each job
         temp_job.set_id(int_vector[i]);
         temp_job.set_transfer(int_vector[i+1]);
         temp_job.set_withdraw(int_vector[i+2]);
@@ -164,16 +169,19 @@ int main()
         i+=6; //increase index by 6 to get next set of information for next job
     }
     cout << "size of jobs_vector: " << jobs_vector.size() << endl << endl; //debugging
+    QuickSort(jobs_vector, left, right);
+
     for (i=0;i<jobs_vector.size();i++) {
-        cout << "stuff in temp_job at " << i << ": \n";
+        cout << "stuff in temp_job at index " << i << ": \n";
         cout << "id: " << jobs_vector[i].get_id() << endl;
-        cout << "transfer: " << jobs_vector[i].get_transfer() << endl;
-        cout << "withdraw: " << jobs_vector[i].get_withdraw() << endl;
-        cout << "deposit: " << jobs_vector[i].get_withdraw() << endl;
-        cout << "wealth: " << jobs_vector[i].get_wealth() << endl;
-        cout << "time: " << jobs_vector[i].get_dtime() << endl;
+        //cout << "transfer: " << jobs_vector[i].get_transfer() << endl;
+        //cout << "withdraw: " << jobs_vector[i].get_withdraw() << endl;
+        //cout << "deposit: " << jobs_vector[i].get_deposit() << endl;
+        //cout << "wealth: " << jobs_vector[i].get_wealth() << endl;
+        cout << "time: " << jobs_vector[i].get_dtime() << endl << endl << endl;
     }
     cout << "Done with jobs_vector! \n";
+
 
     return 0;
 }
@@ -252,4 +260,59 @@ void endl_conversion(vector <int> &vi, string int_str)
 
 }
 
+void QuickSort (vector <Job> &jv, int left, int right)
+{
+    right = jv.size();
+	int i = left, j = right;
+    int pivot = jv[(left + right) / 2].get_dtime(); //get pivot, sorting by time
+
+    //partition of 2 arrays and swapping
+    while (i <= j) {
+            while (jv[i].get_dtime() < pivot) {
+                  i++;
+            }
+            while (jv[j].get_dtime() > pivot) {
+                  j--;
+            }
+            if (i <= j && jv[i].get_id()!= jv[j].get_id()) { //make sure jobs are NOT the same!
+                  swapp(jv[i], jv[j]); //swap jobs here
+                  i++;
+                  j--; //after swap, change index counters
+            }
+    }
+
+    if (left < j)
+        QuickSort(jv, left, j);
+    if (i < right)
+		QuickSort(jv, i, right);
+}
+
+void swapp (Job &x, Job &y) //for use in quicksort, swapping jobs
+{
+    Job tempjob; //to be used to move jobs around
+    //set up tempjob = x
+    tempjob.set_id(x.get_id());
+    tempjob.set_transfer(x.get_transfer());
+    tempjob.set_withdraw(x.get_withdraw());
+    tempjob.set_deposit(x.get_deposit());
+    tempjob.set_wealth(x.get_wealth());
+    tempjob.set_dtime(x.get_dtime());
+
+    //set up x = y;
+    x.set_id(y.get_id());
+    x.set_transfer(y.get_transfer());
+    x.set_withdraw(y.get_transfer());
+    x.set_deposit(y.get_deposit());
+    x.set_wealth(y.get_wealth());
+    x.set_dtime(y.get_dtime());
+
+
+    //set up y = temp;
+    y.set_id(tempjob.get_id());
+    y.set_transfer(tempjob.get_transfer());
+    y.set_withdraw(tempjob.get_withdraw());
+    y.set_deposit(tempjob.get_deposit());
+    y.set_wealth(tempjob.get_wealth());
+    y.set_dtime(tempjob.get_dtime());
+}
 
