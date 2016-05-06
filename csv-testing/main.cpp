@@ -10,24 +10,23 @@ using namespace std;
 class Job
 {
 private:
-    int id;
-    int transfer;
-    int withdraw;
-    int deposit;
-    int wealth;
-    int dtime;
+    int id; //customer ID
+    int transfer; //transfer amount
+    int withdraw; //account # withdrawing from
+    int deposit; //account # depositing to
+    int wealth; //customer wealth
+    int dtime; //time deposit must be made by
 
 public:
-
     Job ();
-
+    //getters (set as all ints to return the proper data)
     int get_id ();
     int get_transfer ();
     int get_withdraw ();
     int get_deposit ();
     int get_wealth ();
     int get_dtime ();
-
+    //setters
     void set_id (int idd);
     void set_transfer (int trans);
     void set_withdraw (int with);
@@ -36,7 +35,7 @@ public:
     void set_dtime (int dtim);
 };
 
-Job::Job()
+Job::Job() //empty constructor
 {
     id=transfer=withdraw=deposit=wealth=dtime=0; //set up job as all 0s
 }
